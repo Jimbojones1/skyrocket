@@ -56,11 +56,15 @@ app.get("/", (req, res) => {
     // otherwise show the landing page
     res.render("index.ejs");
   }
-  
+
 });
 
 // mounting the controllers at an address on the server
 app.use("/auth", authController);
+
+
+// Check for log before our application endpoints
+app.use(isSignedIn)
 app.use("/users/:userId/applications", applicationCtrl);
 
 //=============================================

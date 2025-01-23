@@ -3,6 +3,7 @@ const router = express.Router()
 
 
 router.get('/', function(req, res){
+	console.log(req.session, ' req.session in index of applications')
 	res.render('applications/index.ejs')
 })
 
