@@ -14,7 +14,7 @@ const applicationSchema = mongoose.Schema({
   status: {
     type: String,
     // enums are the options that you have as the value of status
-    enum: ['interested', 'interviewing', 'rejected', 'accepted']
+    enum: ['interested', 'interviewing', 'rejected', 'accepted', 'applied']
   }
 })
 
