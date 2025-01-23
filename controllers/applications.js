@@ -2,17 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 const UserModel = require("../models/user");
-const User = require("../models/user");
 
 router.get("/", async function (req, res) {
   console.log(req.session, " req.session in index of applications");
   try {
-    const currentUser = await User.findById(req.session.user._id);
+    const currentUser = await UserModel.findById(req.session.user._id);
 
     res.render("applications/index.ejs", {
       applications: currentUser.applications,
     });
-	
+
   } catch (err) {
     console.log(err);
     res.send("Error Rendering all applications check terminal");
@@ -26,7 +25,7 @@ router.get("/new", function (req, res) {
 router.post("/", async function (req, res) {
   try {
     // look up the user
-    const currentUser = await User.findById(req.session.user._id);
+    const currentUser = await UserModel.findById(req.session.user._id);
     // then add the contents of the form to the users applications array
     currentUser.applications.push(req.body);
     // anytime we mutate a document we must tell the database
