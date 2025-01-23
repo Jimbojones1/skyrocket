@@ -44,6 +44,11 @@ router.post('/sign-up', async (req, res) => {
       _id: userCreated._id
     }
 
+    // req.session.user = {
+    //   username: userInDatabase.username,
+    //   _id: userInDatabase._id
+    // };
+
 
     res.redirect('/auth/sign-in');
   } catch (error) {
