@@ -22,6 +22,51 @@ router.get("/new", function (req, res) {
   res.render("applications/new.ejs");
 });
 
+router.put('/:applicationId', async function(req, res){
+	try {
+		// find the logged in the user
+		const currentUser = await UserModel.findById(req.session.user._id)
+		// find the current Application (Mongoose document method)
+		const application = currentUser.applications.id(req.params.applicationId)
+		// update the application (mongoose Document method called .set)
+		application.set(req.body) // set takes the updates on the object( req.body, contents of the form)
+		// tell the database we made the update
+		await currentUser.save()
+
+		// redirect back to the show page
+		res.redirect(`/users/${currentUser._id}/applications/${application._id}`)
+
+
+	} catch(err){
+		console.log(err)
+		res.send("error updating application, check terminal")
+	}
+})
+
+
+
+// Job of the this function is to give the form to the client
+// to edit an application (form is prefilled out!)
+router.get('/:applicationId/edit', async function(req, res){
+	try {
+			// Look up the user, then grab the application that matches the id in params
+		// from the user's applications array
+		const currentUser = await UserModel.findById(req.session.user._id)
+		// find the application ("The google" Mongoose document methods)
+		const application = currentUser.applications.id(req.params.applicationId)
+		// respond to the client with the ejs page
+		res.render('applications/edit.ejs', {
+			application: application
+		})
+	
+
+	} catch(err){
+		console.log(err)
+		res.send('Error getting edit form, check terminal')
+	}
+})
+
+
 router.delete('/:applicationId', async function(req, res){
 	try {
 		// look up the user, because the user has the applications array
