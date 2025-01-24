@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const UserModel = require("../models/user");
-const User = require("../models/user");
 
 router.get("/", async function (req, res) {
   console.log(req.session, " req.session in index of applications");
@@ -23,13 +22,36 @@ router.get("/new", function (req, res) {
   res.render("applications/new.ejs");
 });
 
+router.delete('/:applicationId', async function(req, res){
+	try {
+		// look up the user, because the user has the applications array
+		// Google (Mongoose Model Methods)
+		const currentUser = await UserModel.findById(req.session.user._id)
+		// look up and delete the application in the array that matches the iid
+		// in the params
+		// Google (Mongoose Document Methods)
+		currentUser.applications.id(req.params.applicationId).deleteOne();
+		// tell the database that we deleted application in the array
+		await currentUser.save()
+
+
+		// to the client to make a get request to the applications/index route
+		res.redirect(`/users/${currentUser._id}/applications`)
+
+	} catch(err){
+		console.log(err)
+		res.send('Error deleting application, check terminal!')
+	}
+})
+
+
 // show route after the new! So express matches the new
 router.get('/:applicationId', async function(req, res){
 	// THe job of this function is to render a specific application
 	try {
 		// Look up the user, then grab the application that matches the id in params
 		// from the user's applications array
-		const currentUser = await User.findById(req.session.user._id)
+		const currentUser = await UserModel.findById(req.session.user._id)
 		// find the application ("The google" Mongoose document methods)
 		const application = currentUser.applications.id(req.params.applicationId)
 		// respond to the client with the ejs page
