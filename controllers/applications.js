@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const UserModel = require("../models/user");
+const User = require("../models/user");
 
 router.get("/", async function (req, res) {
   console.log(req.session, " req.session in index of applications");
@@ -21,6 +22,26 @@ router.get("/", async function (req, res) {
 router.get("/new", function (req, res) {
   res.render("applications/new.ejs");
 });
+
+// show route after the new! So express matches the new
+router.get('/:applicationId', async function(req, res){
+	// THe job of this function is to render a specific application
+	try {
+		// Look up the user, then grab the application that matches the id in params
+		// from the user's applications array
+		const currentUser = await User.findById(req.session.user._id)
+		// find the application ("The google" Mongoose document methods)
+		const application = currentUser.applications.id(req.params.applicationId)
+		// respond to the client with the ejs page
+		res.render('applications/show.ejs', {
+			application: application
+		})
+
+	} catch(err){
+		console.log(err)
+		res.send("error and show page check your terminal!")
+	}
+})
 
 router.post("/", async function (req, res) {
   try {
